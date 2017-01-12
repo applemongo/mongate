@@ -8,9 +8,8 @@ import (
 	"syscall"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/applemongo/gate"
-	"github.com/applemongo/gate/monitor"
-    "fmt"
+	"github.com/applemongo/mongate/gate"
+	"github.com/applemongo/mongate/monitor"
 )
 
 var (
