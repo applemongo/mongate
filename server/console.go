@@ -1,4 +1,4 @@
-package monitor
+package server
 
 import (
 	"encoding/json"
@@ -12,12 +12,12 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type Server interface {
+type Console interface {
 	io.Closer
 	http.Handler
 }
 
-type server struct {
+type console struct {
 	sync.Mutex
 
 	r        *mux.Router
@@ -25,10 +25,10 @@ type server struct {
 	logger   *logrus.Logger
 }
 
-func New(logger *logrus.Logger) Server {
+func NewConsole(logger *logrus.Logger) Server {
 	r := mux.NewRouter()
 
-	s := &server{
+	s := &console{
 		r:        r,
 		logger:   logger,
 		backends: make(map[string]gate.Proxy),
@@ -42,11 +42,11 @@ func New(logger *logrus.Logger) Server {
 	return s
 }
 
-func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (s *console) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.r.ServeHTTP(w, r)
 }
 
-func (s *server) Close() error {
+func (s *console) Close() error {
 	s.Lock()
 	defer s.Unlock()
 
@@ -65,7 +65,7 @@ func (s *server) Close() error {
 	return err
 }
 
-func (s *server) listBackends(w http.ResponseWriter, r *http.Request) {
+func (s *console) listBackends(w http.ResponseWriter, r *http.Request) {
 	s.logger.Debug("listing backends")
 
 	out := []*gate.Backend{}
@@ -79,7 +79,7 @@ func (s *server) listBackends(w http.ResponseWriter, r *http.Request) {
 	s.marshal(w, out)
 }
 
-func (s *server) getBackend(w http.ResponseWriter, r *http.Request) {
+func (s *console) getBackend(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 
 	s.logger.WithField("id", id).Debug("getting backend")
@@ -97,13 +97,12 @@ func (s *server) getBackend(w http.ResponseWriter, r *http.Request) {
 	s.marshal(w, p.Backend())
 }
 
-func (s *server) addBackend(w http.ResponseWriter, r *http.Request) {
+func (s *console) addBackend(w http.ResponseWriter, r *http.Request) {
 	var (
 		backend *gate.Backend
 		id      = mux.Vars(r)["id"]
 	)
-
-    http.Error(w, fmt.Sprintf("ud %s", id), http.StatusConflict)
+    fmt.Printf("id %s", string(id))
 	s.logger.WithField("id", id).Debug("adding new backend")
 
 	s.Lock()
@@ -153,7 +152,7 @@ func (s *server) addBackend(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
-func (s *server) deleteBackend(w http.ResponseWriter, r *http.Request) {
+func (s *console) deleteBackend(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 
 	s.logger.WithField("id", id).Info("deleting backend")
@@ -184,7 +183,7 @@ func (s *server) deleteBackend(w http.ResponseWriter, r *http.Request) {
 	s.Unlock()
 }
 
-func (s *server) marshal(w http.ResponseWriter, v interface{}) {
+func (s *console) marshal(w http.ResponseWriter, v interface{}) {
 	w.Header().Set("content-type", "application/json")
 
 	if err := json.NewEncoder(w).Encode(v); err != nil {

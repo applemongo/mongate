@@ -15,7 +15,7 @@ type tcpProxy struct {
 	started     bool
 }
 
-func newTcpPRoxy(backend *Backend) (*tcpProxy, error) {
+func newTcpProxy(backend *Backend) (*tcpProxy, error) {
 	return &tcpProxy{
 		backend:     backend,
 		connections: make(chan net.Conn, backend.ConnectionBuffer),

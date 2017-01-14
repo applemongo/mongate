@@ -1,0 +1,23 @@
+[
+    {
+        "name": "redis",
+        "bind_ip": "127.0.0.1",
+        "bind_port": 12306,
+        "proto": "tcp",
+        "connection_buffer": 10,
+        "max_concurrent": 100,
+        "backend_ip": "127.0.0.1",
+        "backend_port": 6379
+    },
+    {
+        "name": "mongodb",
+        "bind_ip": "127.0.0.1",
+        "bind_port": 12307,
+        "proto": "tcp",
+        "connection_buffer": 10,
+        "max_concurrent": 100,
+        "backend_ip": "127.0.0.1",
+        "backend_port": 27017
+    }
+]
+

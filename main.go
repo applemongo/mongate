@@ -9,7 +9,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/applemongo/mongate/gate"
-	"github.com/applemongo/mongate/monitor"
+	"github.com/applemongo/mongate/server"
 )
 
 var (
@@ -57,14 +57,14 @@ func main() {
 		logger.Fatalf("setting rlimit %s", err)
 	}
 
-	s := monitor.New(logger)
+	s := server.New(logger)
 	go func() {
 		sigc := make(chan os.Signal, 10)
 		signal.Notify(sigc, syscall.SIGTERM, syscall.SIGQUIT, os.Interrupt)
 
 		for _ = range sigc {
 			if err := s.Close(); err != nil {
-				logger.WithField("error", err).Fatal("closing monitor")
+				logger.WithField("error", err).Fatal("closing server")
 			}
 			os.Exit(0)
 		}
