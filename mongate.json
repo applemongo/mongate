@@ -4,12 +4,22 @@
     "bind_port": 3000
   },
   "proxies":{
-    "mongodb": {
+    "mongodb_1": {
       "name": "mongodb",
       "bind_ip": "127.0.0.1",
       "bind_port": 12307,
       "proto": "tcp",
-      "connection_buffer": 10,
+      "connection_buffer": 100,
+      "max_concurrent": 100,
+      "backend_ip": "127.0.0.1",
+      "backend_port": 27017
+    },
+    "mongodb_2": {
+      "name": "mongodb",
+      "bind_ip": "127.0.0.1",
+      "bind_port": 12308,
+      "proto": "tcp",
+      "connection_buffer": 100,
       "max_concurrent": 100,
       "backend_ip": "127.0.0.1",
       "backend_port": 27017

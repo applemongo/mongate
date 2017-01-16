@@ -10,6 +10,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/applemongo/mongate/gate"
 	"github.com/applemongo/mongate/server"
+    "fmt"
 )
 
 var (
@@ -32,9 +33,9 @@ func setRlimit() error {
 	if rlimit > 0 {
 		var limit syscall.Rlimit
 		if err := syscall.Getrlimit(syscall.RLIMIT_NOFILE, &limit); err != nil {
+            fmt.Println(err)
 			return err
 		}
-
 		logger.WithFields(logrus.Fields{
 			"current": limit.Cur,
 			"max":     limit.Max,
@@ -56,7 +57,6 @@ func main() {
 	if err := setRlimit(); err != nil {
 		logger.Fatalf("setting rlimit %s", err)
 	}
-
 	s := server.New(logger)
 	go func() {
 		sigc := make(chan os.Signal, 10)

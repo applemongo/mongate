@@ -38,8 +38,6 @@ func New(logger *logrus.Logger) Server {
         fmt.Println("config error: ", err)
         os.Exit(1) //TODO: checkout code definition
     }
-    fmt.Println("config: ", config)
-
 
 	r := mux.NewRouter()
 
@@ -50,7 +48,7 @@ func New(logger *logrus.Logger) Server {
 	}
 	r.HandleFunc("/", s.listBackends).Methods("GET")
 
-    s.configProxies(&config)
+    s.configServer(config)
 
 	return s
 }
